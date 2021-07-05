@@ -1,9 +1,9 @@
-import { Position } from './Position';
-import { Circle, Linear } from './Shapes';
+import { Coordinate } from './Coordinate';
+import { Circle, Polygon } from './Shapes';
 
 interface Drawable {
     draw(ctx: CanvasRenderingContext2D): void;
-    drawText(ctx: CanvasRenderingContext2D, pos: Position, text: string): void;
+    drawText(ctx: CanvasRenderingContext2D, pos: Coordinate, text: string): void;
 }
 
 export class DrawCircle implements Drawable {
@@ -14,34 +14,34 @@ export class DrawCircle implements Drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        var origin: Position = this.circle.getOrigin();
+        var center: Coordinate = this.circle.getCenter();
         var radius: number = this. circle.getRadius();
         ctx.beginPath();
-        ctx.arc(origin.x, origin.y, radius, 0, 2 * Math.PI);
+        ctx.arc(center.x, center.y, radius, 0, 2 * Math.PI);
         ctx.stroke();
     }
 
-    drawText(ctx: CanvasRenderingContext2D, pos: Position, text: string): void {
+    drawText(ctx: CanvasRenderingContext2D, pos: Coordinate, text: string): void {
         ctx.fillText(text, pos.x, pos.y);
     }
 }
 
 export class DrawLinear implements Drawable {
-    private shape: Linear;
+    private shape: Polygon;
 
-    constructor(shape: Linear) {
+    constructor(shape: Polygon) {
         this.shape = shape;
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        var origin: Position = this.shape.getOrigin();
-        var path: Position[] = this.shape.getPath();
+        var center: Coordinate = this.shape.getCenter();
+        var vertices: Coordinate[] = this.shape.getVertices();
         ctx.beginPath();
-        ctx.moveTo(origin.x, origin.y);
-        path.forEach((p: Position) => { ctx.lineTo(p.x, p.y) ; });
-        ctx.lineTo(origin.x, origin.y);
+        ctx.moveTo(center.x, center.y);
+        vertices.forEach((p: Coordinate) => { ctx.lineTo(p.x, p.y) ; });
+        ctx.lineTo(center.x, center.y);
         ctx.stroke();
     }
 
-    drawText(ctx: CanvasRenderingContext2D, pos: Position, text: string): void { }
+    drawText(ctx: CanvasRenderingContext2D, pos: Coordinate, text: string): void { }
 }
